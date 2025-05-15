@@ -1,13 +1,21 @@
-FROM openjdk:17
+FROM openjdk:17-alpine
 
-# Set working directory
 WORKDIR /app
 
-# Copy JAR file
-COPY build/libs/url-generator-service.jar app.jar
+# Install Redis CLI and other network diagnostic tools
+RUN apk add --no-cache redis iputils curl busybox-extras
 
-# Expose the port the service runs on (adjust if needed)
+# Copy the wait-for-redis script
+COPY wait-for-redis.sh wait-for-redis.sh
+RUN chmod +x wait-for-redis.sh
+
+# Copy the application JAR
+COPY build/libs/app.jar app.jar
+
 EXPOSE 1110
 
-# Run the application
-ENTRYPOINT ["java", "-jar", "app.jar"]
+# Healthcheck to verify the application can connect to Redis
+HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
+  CMD redis-cli -h $REDIS_HOST -p $REDIS_PORT PING || exit 1
+
+ENTRYPOINT ["./wait-for-redis.sh"]

@@ -19,6 +19,6 @@ public class UrlShortenerController {
     @PostMapping("/shorten")
     public ResponseEntity<String> shorten(@RequestBody String longUrl) {
         String shortId = service.shortenUrl(longUrl);
-        return ResponseEntity.ok("http://localhost:8081/" + shortId);
+        return ResponseEntity.ok("Your url" + shortId);
     }
 }

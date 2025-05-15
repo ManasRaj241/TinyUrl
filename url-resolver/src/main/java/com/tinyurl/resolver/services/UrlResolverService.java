@@ -12,7 +12,10 @@ public class UrlResolverService {
     }
 
     public String resolve(String shortId) {
-        return redisTemplate.opsForValue().get(shortId);
+        System.out.println("Attempting to resolve: " + shortId.trim());
+        String result = redisTemplate.opsForValue().get(shortId.trim());
+        System.out.println("Resolution result: " + result);
+        return result;
     }
 }
 

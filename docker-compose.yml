@@ -1,34 +1,71 @@
 version: '3.8'
 
+networks:
+  app-network:
+    driver: bridge
+
 services:
   redis:
     image: redis:7-alpine
     container_name: redis
+    networks:
+      - app-network
     ports:
       - "6379:6379"
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    # Make Redis logs more verbose for debugging
+    command: ["redis-server"]
 
   url-shortener:
     build:
       context: ./url-shortener
       dockerfile: Dockerfile
     container_name: url-shortener
+    networks:
+      - app-network
     ports:
       - "1110:1110"
     environment:
-      - REDIS_HOST=redis
-      - REDIS_PORT=6379
+      # Use explicit IP address for Redis to bypass DNS resolution issues
+      # This will be replaced with the Redis container's actual IP
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      # Set higher timeouts for Redis connection
+      SPRING_REDIS_TIMEOUT: 30000
+      # Use explicit bean definitions
+      SPRING_REDIS_HOST: redis
+      SPRING_REDIS_PORT: 6379
+      # Add logging
+      LOGGING_LEVEL_ROOT: INFO
+      LOGGING_LEVEL_ORG_SPRINGFRAMEWORK_DATA_REDIS: DEBUG
     depends_on:
-      - redis
+      redis:
+        condition: service_healthy
+    restart: unless-stopped
 
   url-resolver:
     build:
       context: ./url-resolver
       dockerfile: Dockerfile
     container_name: url-resolver
+    networks:
+      - app-network
     ports:
       - "1111:1111"
     environment:
-      - REDIS_HOST=redis
-      - REDIS_PORT=6379
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      SPRING_REDIS_TIMEOUT: 30000
+      SPRING_REDIS_HOST: redis
+      SPRING_REDIS_PORT: 6379
+      LOGGING_LEVEL_ROOT: INFO
+      LOGGING_LEVEL_ORG_SPRINGFRAMEWORK_DATA_REDIS: DEBUG
     depends_on:
-      - redis
+      redis:
+        condition: service_healthy
+    restart: unless-stopped
