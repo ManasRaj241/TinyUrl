@@ -18,12 +18,12 @@ public class UrlResolverController {
     }
 
     @GetMapping("/{shortId}")
-    public ResponseEntity<Void> resolve(@PathVariable String shortId) {
+    public ResponseEntity<String> resolve(@PathVariable String shortId) {
         String longUrl = service.resolve(shortId);
         if (longUrl == null) {
             return ResponseEntity.notFound().build();
         }
-        return ResponseEntity.status(HttpStatus.FOUND).location(URI.create(longUrl)).build();
+        return ResponseEntity.ok(longUrl);
     }
 }
 
