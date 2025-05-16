@@ -1,0 +1,17 @@
+apiVersion: v2
+name: tinyurl
+description: A Helm chart for Kubernetes TinyURL app
+type: application
+version: 0.1.0
+appVersion: "1.0.0"
+
+dependencies:
+  - name: redis
+    version: 0.1.0
+    repository: file://charts/redis
+  - name: url-shortener
+    version: 0.1.0
+    repository: file://charts/url-shortener
+  - name: url-resolver
+    version: 0.1.0
+    repository: file://charts/url-resolver

@@ -1,0 +1,12 @@
+dependencies:
+- name: redis
+  repository: file://charts/redis
+  version: 0.1.0
+- name: url-shortener
+  repository: file://charts/url-shortener
+  version: 0.1.0
+- name: url-resolver
+  repository: file://charts/url-resolver
+  version: 0.1.0
+digest: sha256:fb5da995306d9c0606d2f8d46d22734290824306f6eb9af39e67a2e8409a82fd
+generated: "2025-05-17T00:08:09.1448266+05:30"

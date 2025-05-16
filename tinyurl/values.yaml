@@ -1,0 +1,56 @@
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 3
+  targetCPUUtilizationPercentage: 80
+ingress:
+  enabled: false
+  className: ""
+  annotations: {}
+  hosts: []
+  tls: []
+service:
+  type: ClusterIP
+  port: 80
+serviceAccount:
+  create: true
+  name: ""
+url-shortener:
+  replicaCount: 1
+  image:
+    repository: manas14935/url-shortener
+    tag: latest
+    pullPolicy: Always
+  service:
+    type: ClusterIP
+    port: 1110
+  env:
+    REDIS_HOST: redis
+    REDIS_PORT: 6379
+    SPRING_REDIS_TIMEOUT: 30000
+
+url-resolver:
+  replicaCount: 1
+  image:
+    repository: manas14935/url-resolver
+    tag: latest
+    pullPolicy: Always
+  service:
+    type: ClusterIP
+    port: 1111
+  env:
+    REDIS_HOST: redis
+    REDIS_PORT: 6379
+    SPRING_REDIS_TIMEOUT: 30000
+
+redis:
+  image:
+    repository: redis
+    tag: 7-alpine
+  auth:
+    enabled: false
+  master:
+    persistence:
+      enabled: false
+  replica:
+    replicaCount: 0

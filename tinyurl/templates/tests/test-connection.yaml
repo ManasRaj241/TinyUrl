@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: "{{ include "tinyurl.fullname" . }}-test-connection"
+  labels:
+    {{- include "tinyurl.labels" . | nindent 4 }}
+  annotations:
+    "helm.sh/hook": test
+spec:
+  containers:
+    - name: test-url-shortener
+      image: busybox
+      command: ['wget']
+      args: ['{{ include "tinyurl.fullname" . }}-url-shortener:{{ index .Values "url-shortener" "service" "port" }}']
+    - name: test-url-resolver
+      image: busybox
+      command: ['wget']
+      args: ['{{ include "tinyurl.fullname" . }}-url-resolver:{{ index .Values "url-resolver" "service" "port" }}']
+  restartPolicy: Never

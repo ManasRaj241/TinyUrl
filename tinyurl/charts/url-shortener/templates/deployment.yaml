@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: url-shortener
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: url-shortener
+  template:
+    metadata:
+      labels:
+        app: url-shortener
+    spec:
+      containers:
+        - name: url-shortener
+          image: manas14935/url-shortener:latest
+          ports:
+            - containerPort: 1110
+          env:
+            - name: REDIS_HOST
+              value: redis
+            - name: REDIS_PORT
+              value: "6379"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: url-shortener
+spec:
+  selector:
+    app: url-shortener
+  ports:
+    - port: 1110
+      targetPort: 1110
+      nodePort: 31110
+  type: NodePort
