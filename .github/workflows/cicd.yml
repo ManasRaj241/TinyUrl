@@ -10,7 +10,7 @@ env:
   IMAGE_RESOLVER: manas14935/url-resolver
 
 jobs:
-  build-and-deploy:
+  build-and-push:
     runs-on: ubuntu-latest
 
     steps:
@@ -43,17 +43,3 @@ jobs:
         run: |
           docker build -t $IMAGE_RESOLVER:latest ./url-resolver
           docker push $IMAGE_RESOLVER:latest
-
-      - name: Set up kubectl
-        run: |
-          echo "${{ secrets.KUBECONFIG_DATA }}" | base64 --decode > kubeconfig
-          export KUBECONFIG=$PWD/kubeconfig
-          kubectl get pods
-
-      - name: Deploy with Helm
-        run: |
-          helm upgrade --install tinyurl ./tinyurl \
-            --set url-shortener.image.repository=$IMAGE_SHORTENER \
-            --set url-resolver.image.repository=$IMAGE_RESOLVER \
-            --set url-shortener.image.tag=latest \
-            --set url-resolver.image.tag=latest
