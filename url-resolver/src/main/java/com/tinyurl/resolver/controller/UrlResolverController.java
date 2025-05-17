@@ -23,7 +23,7 @@ public class UrlResolverController {
         if (longUrl == null) {
             return ResponseEntity.notFound().build();
         }
-        return ResponseEntity.ok(longUrl);
+        return ResponseEntity.ok("Original URL: "+longUrl);
     }
 }
 
